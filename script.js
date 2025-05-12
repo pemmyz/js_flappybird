@@ -11,12 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Colors
     const WHITE = "#FFFFFF";
     const BLACK = "#000000";
-    // const BLUE = "#0000FF"; // Background is set by CSS
     const GREEN = "#00FF00";
     const RED = "#FF0000";
-    const BIRD_COLOR = RED; // Bird color from Pygame
-    const PIPE_COLOR = GREEN; // Pipe color from Pygame
-    const BASE_COLOR = BLACK; // Base color from Pygame
+    const BIRD_COLOR = RED;
+    const PIPE_COLOR = GREEN;
+    const BASE_COLOR = BLACK;
 
     // Bird settings
     const bird_radius = 15;
@@ -26,16 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Pipe settings
     const PIPE_WIDTH = 50;
-    // const PIPE_HEIGHT = SCREEN_HEIGHT; // Not explicitly needed for drawing like this
     const pipe_gap = 155;
     let pipe_x = SCREEN_WIDTH;
 
-    // Define initial positions for the pipes (gap start y)
-    // These values determine the y-coordinate of the bottom edge of the top pipe
-    let pipe_y_top_val = Math.floor(Math.random() * (50 - 25 + 1)) + 25; // Random top pipe height of 25 to 50
+    let pipe_y_top_val = Math.floor(Math.random() * (50 - 25 + 1)) + 25;
     let pipe_y_middle_val = (SCREEN_HEIGHT / 2) - (pipe_gap / 2);
     let pipe_y_bottom_val = pipe_y_middle_val + Math.floor((SCREEN_HEIGHT / 2 - pipe_y_middle_val) * 2 / 3);
-    
+
     const pipe_position_cycle = [pipe_y_top_val, pipe_y_bottom_val, pipe_y_middle_val];
     let pipe_position_index = 0;
     let current_pipe_gap_start_y = pipe_position_cycle[pipe_position_index];
@@ -46,11 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Game settings
     const gravity = 0.5;
-    const flap_strength = -8; // Adjusted for smoother feel
+    const flap_strength = -8;
     const scroll_speed = 3;
     let score = 0;
     const FONT_SIZE = 55;
-    const FONT_FAMILY = "Arial"; // Or SysFont equivalent like 'Consolas', 'Courier New'
+    const FONT_FAMILY = "Arial";
 
     // Game state
     let gameRunning = false;
@@ -64,12 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameOverMessage = document.getElementById('gameOverMessage');
     const finalScoreSpan = document.getElementById('finalScore');
 
-
     function drawBackground() {
-        // Background color is set by CSS on the canvas element
-        // If you want to draw it dynamically:
-        // ctx.fillStyle = "#70c5ce"; // Light blue
-        // ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        // Background color is set by CSS
     }
 
     function drawBird(x, y) {
@@ -82,9 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function drawPipe(x, gap_start_y, gap_size) {
         ctx.fillStyle = PIPE_COLOR;
-        // Upper pipe
         ctx.fillRect(x, 0, PIPE_WIDTH, gap_start_y);
-        // Lower pipe
         ctx.fillRect(x, gap_start_y + gap_size, PIPE_WIDTH, SCREEN_HEIGHT - (gap_start_y + gap_size) - BASE_HEIGHT);
     }
 
@@ -94,9 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function drawScore(currentScore) {
-        scoreDisplay.textContent = `Score: ${currentScore}`; // Update HUD score
-        
-        // Draw score on canvas (like Pygame)
+        scoreDisplay.textContent = `Score: ${currentScore}`;
         ctx.fillStyle = WHITE;
         ctx.font = `${FONT_SIZE}px ${FONT_FAMILY}`;
         const scoreText = String(currentScore);
@@ -105,35 +93,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function checkCollision(b_x, b_y, b_radius, p_x, p_gap_start_y, p_width, p_gap_size) {
-        // Check collision with pipes
         if (b_x + b_radius > p_x && b_x - b_radius < p_x + p_width) {
-            // Bird is horizontally aligned with the pipe
             if (b_y - b_radius < p_gap_start_y || b_y + b_radius > p_gap_start_y + p_gap_size) {
-                // console.log("Hit pipe");
-                return true; // Collision with pipe
+                return true;
             }
         }
-
-        // Check collision with ground
-        if (b_y + b_radius > base_y) {
-            // console.log("Hit ground");
-            return true;
-        }
-
-        // Check collision with ceiling
-        if (b_y - b_radius < 0) {
-            // console.log("Hit ceiling");
-            return true;
-        }
+        if (b_y + b_radius > base_y) return true;
+        if (b_y - b_radius < 0) return true;
         return false;
     }
-    
+
     function resetGame() {
         bird_y = SCREEN_HEIGHT / 2;
         bird_y_change = 0;
         pipe_x = SCREEN_WIDTH;
-        
-        // Re-randomize pipe cycle starts if desired, or keep them from initial load
+
         pipe_y_top_val = Math.floor(Math.random() * (50 - 25 + 1)) + 25;
         pipe_y_middle_val = (SCREEN_HEIGHT / 2) - (pipe_gap / 2);
         pipe_y_bottom_val = pipe_y_middle_val + Math.floor((SCREEN_HEIGHT / 2 - pipe_y_middle_val) * 2 / 3);
@@ -143,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         pipe_position_index = 0;
         current_pipe_gap_start_y = pipe_position_cycle[pipe_position_index];
-        
+
         score = 0;
         gameOver = false;
         paused = false;
@@ -156,24 +130,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function gameLoop() {
         if (!gameRunning && !gameOver) {
-            // Initial state or after a game over, waiting to start
-            drawBackground(); // Clear canvas essentially
+            drawBackground();
             drawBase();
-            drawBird(bird_x, bird_y); // Show bird at start position
+            drawBird(bird_x, bird_y);
             startMessage.style.display = 'block';
             requestAnimationFrame(gameLoop);
             return;
         }
-        
+
         if (paused) {
             pausedMessage.style.display = 'block';
-            // Optionally draw current game state while paused
-            // drawBackground();
-            // drawPipe(pipe_x, current_pipe_gap_start_y, pipe_gap);
-            // drawBase();
-            // drawBird(bird_x, bird_y);
-            // drawScore(score);
-            requestAnimationFrame(gameLoop); // Keep listening for unpause
+            requestAnimationFrame(gameLoop);
             return;
         } else {
             pausedMessage.style.display = 'none';
@@ -182,21 +149,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (gameOver) {
             finalScoreSpan.textContent = score;
             gameOverMessage.style.display = 'block';
-            // Optionally draw final game state
-            // drawBackground();
-            // drawPipe(pipe_x, current_pipe_gap_start_y, pipe_gap);
-            // drawBase();
-            // drawBird(bird_x, bird_y); // Show bird at collision point
-            // drawScore(score);
-            requestAnimationFrame(gameLoop); // Keep listening for restart
+            requestAnimationFrame(gameLoop);
             return;
         }
 
-        // Bird movement
         bird_y_change += gravity;
         bird_y += bird_y_change;
 
-        // Pipe movement
         pipe_x -= scroll_speed;
         if (pipe_x < -PIPE_WIDTH) {
             pipe_x = SCREEN_WIDTH;
@@ -205,15 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
             score += 1;
         }
 
-        // Check for collisions
         if (checkCollision(bird_x, bird_y, bird_radius, pipe_x, current_pipe_gap_start_y, PIPE_WIDTH, pipe_gap)) {
             gameOver = true;
-            gameRunning = false; // Stop active game updates
+            gameRunning = false;
         }
 
-        // Drawing everything
-        ctx.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); // Clear canvas
-        drawBackground(); // Redraw background if it's dynamic
+        ctx.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        drawBackground();
         drawPipe(pipe_x, current_pipe_gap_start_y, pipe_gap);
         drawBase();
         drawBird(bird_x, bird_y);
@@ -222,22 +179,42 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(gameLoop);
     }
 
+    // --- Action to perform on flap/start/restart ---
+    function performFlapAction() {
+        if (!gameRunning && !gameOver) { // Start game
+            resetGame();
+        } else if (gameOver) { // Restart game
+            resetGame();
+        } else if (gameRunning && !paused) { // Flap
+            bird_y_change = flap_strength;
+        }
+    }
+
     // Event Listeners
     document.addEventListener('keydown', (event) => {
         if (event.key === 'ArrowUp' || event.key === ' ') {
-            event.preventDefault(); // Prevent spacebar from scrolling
-            if (!gameRunning && !gameOver) { // Start game
-                resetGame(); // This sets gameRunning to true
-            } else if (gameOver) { // Restart game
-                resetGame();
-            } else if (gameRunning && !paused) { // Flap
-                bird_y_change = flap_strength;
-            }
+            event.preventDefault(); // Prevent spacebar scrolling
+            performFlapAction();
         } else if ((event.key === 'p' || event.key === 'P') && gameRunning && !gameOver) {
-            paused = !paused;
+            paused = !paused; // Toggle pause
         }
     });
-    
+
+    // Touch screen controls
+    canvas.addEventListener('touchstart', (event) => {
+        event.preventDefault(); // Prevent default touch actions
+        performFlapAction();
+    });
+
+    // Mouse click controls
+    canvas.addEventListener('mousedown', (event) => {
+        // Optional: Check if it's the primary button (left click)
+        // if (event.button === 0) {
+            event.preventDefault(); // Prevent potential text selection/drag behavior
+            performFlapAction();
+        // }
+    });
+
     // Start the initial "waiting" loop
     gameLoop();
 });
