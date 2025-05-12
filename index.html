@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird HTML5</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <canvas id="gameCanvas"></canvas>
+        <div id="scoreDisplay">Score: 0</div>
+        <div id="instructions">
+            Press UP Arrow or Space to Flap<br>
+            Press P to Pause/Resume
+        </div>
+        <div id="startMessage" class="message-overlay">Press UP or SPACE to Start</div>
+        <div id="pausedMessage" class="message-overlay" style="display: none;">Paused</div>
+        <div id="gameOverMessage" class="message-overlay" style="display: none;">
+            Game Over!<br>
+            Final Score: <span id="finalScore">0</span><br>
+            Press UP or SPACE to Restart
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

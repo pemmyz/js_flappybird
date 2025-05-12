@@ -1,0 +1,46 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #333;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+.container {
+    text-align: center;
+    position: relative; /* For positioning overlay messages */
+}
+
+#gameCanvas {
+    border: 1px solid #000;
+    background-color: #70c5ce; /* Light blue, similar to Pygame's BLUE */
+    display: block; /* Remove extra space below canvas */
+    margin: 0 auto;
+}
+
+#scoreDisplay {
+    font-size: 24px;
+    margin-top: 10px;
+}
+
+#instructions {
+    font-size: 14px;
+    margin-top: 5px;
+    color: #ccc;
+}
+
+.message-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 28px;
+    text-align: center;
+    z-index: 10; /* Ensure it's above the canvas */
+}
