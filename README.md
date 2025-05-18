@@ -21,17 +21,53 @@ This is a simple Flappy Bird-style game implemented using JavaScript/HTML5. The 
 - The score increases each time you pass a pipe.
 
 
-## 🚀 Getting Started
+
+## 🚦 Difficulty Modes
+
+The game includes three selectable difficulty modes that affect the **pipe gap shrinking rate**:
+
+| Difficulty      | Description                                                | Pipe Gap Behavior                         |
+|----------------|------------------------------------------------------------|-------------------------------------------|
+| 🟢 Normal       | Balanced for casual play                                   | Constant pipe gap (no shrinking).         |
+| 🔴 Hard         | More challenging; pipes narrow over time                   | Pipe gap shrinks by **2px** per score.    |
+| 🔥 Extra Hard   | Intense mode for skilled players                           | Pipe gap shrinks by **5px** per score.    |
+
+### 🔁 Switching Difficulty
+
+- Press `N` before or during gameplay to cycle through the difficulty modes.
+- The selected mode is shown on screen.
+- The difficulty change applies to the next game if done during Game Over or idle state.
+
+---
+
+## 📐 Technical Details
+
+- **Initial Pipe Gap**: 155 pixels
+- **Minimum Pipe Gap**: ~52 pixels (based on bird size)
+- The pipe gap decreases **only after each successful pipe pass**, making progression harder as your score increases.
+
+## 📺 UI Elements
+
+- **Score Display** updates on both the canvas and DOM.
+- **Difficulty Label** shows current mode:  
+  `"Difficulty: Normal (Press N to change)"`
+
+## 📱 Mobile Support
+
+- Tap/click anywhere on the canvas to flap.
+
+---
 
 
 ## 🛠️ Features
 
-- Simple and clean implementation using Javascript/HTML5  
+- Simple and clean implementation using JavaScript/HTML5  
 - Score tracking  
 - Gravity and flap mechanics  
-- Collision detection with pipes and ground/ceiling  
+- Collision detection with pipes and screen bounds  
 - Randomized pipe gap positions for variety  
-
+- **Selectable difficulty levels**  
+- Mobile-friendly: Tap to flap  
 
 ## ✅ To Do
 
