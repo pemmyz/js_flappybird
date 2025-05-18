@@ -26,6 +26,13 @@ body {
     margin-top: 10px;
 }
 
+/* Added style for pipeGapDisplay */
+#pipeGapDisplay {
+    font-size: 18px;
+    margin-top: 5px;
+    color: #e0e0e0; /* Slightly dimmer than score */
+}
+
 #instructions {
     font-size: 14px;
     margin-top: 5px;
