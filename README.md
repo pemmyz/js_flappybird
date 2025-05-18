@@ -75,4 +75,4 @@ The game includes three selectable difficulty modes that affect the **pipe gap s
 - Add a start menu and game over screen  
 - Improve graphics with images or sprites  
 - High score saving
-
+- Add autobot AI
