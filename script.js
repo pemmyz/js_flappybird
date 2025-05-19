@@ -40,9 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const base_y = SCREEN_HEIGHT - BASE_HEIGHT;
 
     // Game settings
-    const gravity = 0.5;
+    const gravity = 0.5; // This defines bird's falling acceleration
     const flap_strength = -8;
-    const scroll_speed = 3;
+    const scroll_speed = 3; // This defines how fast pipes and base move
     let score = 0;
     const FONT_SIZE = 55;
     const FONT_FAMILY = "Arial";
@@ -137,7 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
         bird_y = SCREEN_HEIGHT / 2;
         bird_y_change = 0;
         pipe_x = SCREEN_WIDTH;
-        pipe_gap = BASE_PIPE_GAP; // Reset pipe_gap to base on new game
+        // Reset pipe_gap based on current difficulty, or to BASE_PIPE_GAP if that's preferred on reset
+        // For consistency, let's reset to BASE_PIPE_GAP, and difficulty logic will shrink it if needed
+        pipe_gap = BASE_PIPE_GAP;
 
         const playable_area_height = SCREEN_HEIGHT - BASE_HEIGHT;
         const min_pipe_segment_height = bird_radius * 1;
@@ -169,14 +171,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         score = 0;
         gameOver = false;
-        paused = false; // Ensure paused is reset
+        paused = false;
         gameRunning = true;
 
         startMessage.style.display = 'none';
         pausedMessage.style.display = 'none';
         gameOverMessage.style.display = 'none';
         instructionsDiv.style.display = 'block';
-        if (pauseButton) pauseButton.textContent = 'Pause (P)'; // Reset button text
+        if (pauseButton) pauseButton.textContent = 'Pause (P)';
         updateDifficultyDisplay();
         updatePipeGapDisplay();
     }
@@ -186,8 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             drawBackground();
             drawBase();
-            drawBird(bird_x, bird_y); // Draw bird in initial position
-            updateAndDrawScore(score); // Show score 0
+            drawBird(bird_x, bird_y);
+            updateAndDrawScore(score);
 
             startMessage.style.display = 'block';
             instructionsDiv.style.display = 'block';
@@ -199,14 +201,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (paused) {
-            pausedMessage.style.display = 'block';
-            instructionsDiv.style.display = 'block'; // Keep instructions visible
-            // updatePipeGapDisplay(); // Already updated per frame or on change
-            requestAnimationFrame(gameLoop); // Keep calling to check for resume
+            // Display paused message, but don't update game logic or draw game elements
+            // The requestAnimationFrame will keep polling until 'paused' is false
+            requestAnimationFrame(gameLoop);
             return;
-        } else {
-            pausedMessage.style.display = 'none';
         }
+        // If not paused, ensure paused message is hidden (already handled by event listeners)
 
         if (gameOver) {
             finalScoreSpan.textContent = score;
@@ -215,11 +215,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pauseButton) pauseButton.textContent = 'Pause (P)';
             updateDifficultyDisplay();
             // updatePipeGapDisplay(); // Show final gap size
-            requestAnimationFrame(gameLoop); // Keep calling to check for restart
+            requestAnimationFrame(gameLoop);
             return;
         }
 
-        // Game logic
+        // --- Active Gameplay Logic ---
         bird_y_change += gravity;
         bird_y += bird_y_change;
 
@@ -230,13 +230,11 @@ document.addEventListener('DOMContentLoaded', () => {
             current_pipe_gap_start_y = pipe_position_cycle[pipe_position_index];
             score += 1;
 
-            // Adjust pipe_gap based on difficulty
             if (currentDifficulty === DIFFICULTIES.HARD) {
                 pipe_gap = Math.max(MIN_PIPE_GAP, pipe_gap - 2);
             } else if (currentDifficulty === DIFFICULTIES.EXTRA_HARD) {
                 pipe_gap = Math.max(MIN_PIPE_GAP, pipe_gap - 5);
             }
-            // No reduction for NORMAL difficulty, pipe_gap remains BASE_PIPE_GAP unless changed by difficulty switch
         }
 
         if (checkCollision(bird_x, bird_y, bird_radius, pipe_x, current_pipe_gap_start_y, PIPE_WIDTH, pipe_gap)) {
@@ -244,26 +242,26 @@ document.addEventListener('DOMContentLoaded', () => {
             gameRunning = false;
         }
 
-        // Drawing
+        // --- Drawing ---
         ctx.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         drawBackground();
         drawPipe(pipe_x, current_pipe_gap_start_y, pipe_gap);
         drawBase();
         drawBird(bird_x, bird_y);
         updateAndDrawScore(score);
-        updatePipeGapDisplay(); // Update pipe gap display every frame during gameplay
+        updatePipeGapDisplay();
 
         requestAnimationFrame(gameLoop);
     }
 
     function performFlapAction() {
-        if (!gameRunning && !gameOver) { // On start screen
+        if (!gameRunning && !gameOver) {
             resetGame();
             bird_y_change = flap_strength;
-        } else if (gameOver) { // On game over screen
+        } else if (gameOver) {
             resetGame();
             bird_y_change = flap_strength;
-        } else if (gameRunning && !paused) { // During active gameplay
+        } else if (gameRunning && !paused) {
             bird_y_change = flap_strength;
         }
     }
@@ -271,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Keyboard Event Listeners
     document.addEventListener('keydown', (event) => {
         if (event.key === 'ArrowUp' || event.key === ' ') {
-            event.preventDefault(); // Prevent page scroll
+            event.preventDefault();
             performFlapAction();
         } else if ((event.key === 'p' || event.key === 'P') && gameRunning && !gameOver) {
             paused = !paused;
@@ -281,7 +279,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 pausedMessage.style.display = 'none';
                 if (pauseButton) pauseButton.textContent = 'Pause (P)';
-                gameLoop(); // Resume game loop
+                // DO NOT call gameLoop() here. The existing rAF in gameLoop's paused state
+                // will pick up that 'paused' is now false on its next tick.
             }
         } else if (event.key === 'n' || event.key === 'N') {
             const oldDifficulty = currentDifficulty;
@@ -289,26 +288,32 @@ document.addEventListener('DOMContentLoaded', () => {
             currentDifficulty = DIFFICULTY_CYCLE_VALUES[currentDifficultyIndex];
             updateDifficultyDisplay();
 
-            if (!gameRunning) { // Game not started or game over
-                pipe_gap = BASE_PIPE_GAP;
-            } else { // Game is currently running
-                if (currentDifficulty === DIFFICULTIES.NORMAL && (oldDifficulty === DIFFICULTIES.HARD || oldDifficulty === DIFFICULTIES.EXTRA_HARD)) {
-                    pipe_gap = BASE_PIPE_GAP; // Reset to base if switching to Normal
+            if (currentDifficulty === DIFFICULTIES.NORMAL) {
+                 pipe_gap = BASE_PIPE_GAP; // Always reset to base for Normal
+            } else {
+                // If switching from Normal to Hard/ExtraHard, or between Hard/ExtraHard,
+                // keep current gap or reset to BASE_PIPE_GAP if it was already smaller.
+                // The shrinking logic in gameLoop will take effect.
+                // If game is not running, simply reset to BASE_PIPE_GAP.
+                if (!gameRunning) {
+                    pipe_gap = BASE_PIPE_GAP;
+                } else if (oldDifficulty === DIFFICULTIES.NORMAL) {
+                    // If we were on normal and switch to hard, reset gap to base so it can shrink.
+                    pipe_gap = BASE_PIPE_GAP;
                 }
-                // If switching to Hard/ExtraHard from Normal, pipe_gap might already be BASE_PIPE_GAP.
-                // Reduction will start on next pipe.
+                // If already on Hard/ExtraHard and switching between them, current pipe_gap is fine
+                // as it would have been shrinking or stable at MIN_PIPE_GAP.
             }
             updatePipeGapDisplay();
         }
     });
 
-    // Touch/Mouse Listeners for Flap
     canvas.addEventListener('touchstart', (event) => {
-        event.preventDefault(); // Important for mobile to prevent zoom/scroll
+        event.preventDefault();
         performFlapAction();
     });
     canvas.addEventListener('mousedown', (event) => {
-        event.preventDefault(); // Prevent text selection or other default actions
+        event.preventDefault();
         performFlapAction();
     });
 
@@ -321,16 +326,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (pauseButton) {
         pauseButton.addEventListener('click', () => {
-            if (gameRunning && !gameOver) { // Only allow pause if game is running and not over
+            if (gameRunning && !gameOver) {
                 paused = !paused;
                 if (paused) {
                     pausedMessage.style.display = 'block';
                     pauseButton.textContent = 'Resume (P)';
-                    // gameLoop will stop its main logic due to 'paused' flag
                 } else {
                     pausedMessage.style.display = 'none';
                     pauseButton.textContent = 'Pause (P)';
-                    gameLoop(); // Resume game loop explicitly
+                    // DO NOT call gameLoop() here.
                 }
             }
         });
@@ -342,12 +346,14 @@ document.addEventListener('DOMContentLoaded', () => {
             currentDifficultyIndex = (currentDifficultyIndex + 1) % DIFFICULTY_CYCLE_VALUES.length;
             currentDifficulty = DIFFICULTY_CYCLE_VALUES[currentDifficultyIndex];
             updateDifficultyDisplay();
-
-            if (!gameRunning) { // Game not started or game over
-                pipe_gap = BASE_PIPE_GAP;
-            } else { // Game is currently running
-                if (currentDifficulty === DIFFICULTIES.NORMAL && (oldDifficulty === DIFFICULTIES.HARD || oldDifficulty === DIFFICULTIES.EXTRA_HARD)) {
-                    pipe_gap = BASE_PIPE_GAP; // Reset to base if switching to Normal
+            
+            if (currentDifficulty === DIFFICULTIES.NORMAL) {
+                 pipe_gap = BASE_PIPE_GAP;
+            } else {
+                if (!gameRunning) {
+                    pipe_gap = BASE_PIPE_GAP;
+                } else if (oldDifficulty === DIFFICULTIES.NORMAL) {
+                    pipe_gap = BASE_PIPE_GAP;
                 }
             }
             updatePipeGapDisplay();
@@ -356,10 +362,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial Setup
     updateDifficultyDisplay();
-    updatePipeGapDisplay(); // Initial call
+    updatePipeGapDisplay();
     startMessage.style.display = 'block';
     instructionsDiv.style.display = 'block';
     if (pauseButton) pauseButton.textContent = 'Pause (P)';
 
-    gameLoop(); // Start the game loop
+    gameLoop();
 });
