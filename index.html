@@ -10,11 +10,17 @@
     <div class="container">
         <canvas id="gameCanvas"></canvas>
         <div id="scoreDisplay">Score: 0</div>
-        <div id="pipeGapDisplay">Gate Size: 155</div> <!-- Added this line -->
+        <div id="pipeGapDisplay">Gate Size: 155</div>
         <div id="instructions">
             Press UP Arrow or Space to Flap<br>
             Press P to Pause/Resume<br>
             <span id="difficultyDisplayElement">Difficulty: Normal (Press N to change)</span>
+        </div>
+        <!-- Added Onscreen Controls -->
+        <div id="onscreenControls">
+            <button id="flapBtn">Flap</button>
+            <button id="pauseBtn">Pause (P)</button>
+            <button id="difficultyBtn">Change Difficulty (N)</button>
         </div>
         <div id="startMessage" class="message-overlay">Press UP or SPACE to Start</div>
         <div id="pausedMessage" class="message-overlay" style="display: none;">Paused</div>

@@ -7,6 +7,11 @@ body {
     background-color: #333;
     font-family: Arial, sans-serif;
     color: white;
+    /* Added to prevent text selection on rapid clicks */
+    user-select: none;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
 }
 
 .container {
@@ -26,11 +31,10 @@ body {
     margin-top: 10px;
 }
 
-/* Added style for pipeGapDisplay */
 #pipeGapDisplay {
     font-size: 18px;
     margin-top: 5px;
-    color: #e0e0e0; /* Slightly dimmer than score */
+    color: #e0e0e0;
 }
 
 #instructions {
@@ -50,4 +54,33 @@ body {
     font-size: 28px;
     text-align: center;
     z-index: 10; /* Ensure it's above the canvas */
+}
+
+/* Added styles for onscreen controls */
+#onscreenControls {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Spacing between buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens if needed */
+}
+
+#onscreenControls button {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: white;
+    background-color: #555;
+    border: 1px solid #777;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    min-width: 80px; /* Ensure buttons have a decent minimum width */
+}
+
+#onscreenControls button:hover {
+    background-color: #666;
+}
+
+#onscreenControls button:active {
+    background-color: #444;
 }
