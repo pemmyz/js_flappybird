@@ -32,8 +32,8 @@ The game includes two automated modes that can be toggled:
 | 🕹️ Demo Mode    | Automatically plays a sample round after inactivity. Useful as an idle screen or attract mode. |
 | 🤖 Bot Mode     | Activates an AI that attempts to play the game intelligently by flapping at optimal times. |
 
-- Press `D` to toggle **Demo Mode**
-- Press `A` to toggle **Bot Mode**
+- Wait 5 seconds to toggle **Demo Mode** when game is reloaded
+- Press `B` to toggle **Bot Mode**
 - Both modes display a label on screen when active
 
 
