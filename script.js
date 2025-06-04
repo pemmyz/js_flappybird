@@ -278,37 +278,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- AUTOBOT LOGIC ---
         if (autobotActive && gameRunning && !paused && !gameOver) {
-            // Ensure current_pipe_gap_start_y is valid for targeting
+            // Ensure current_pipe_gap_start_y and pipe_gap are valid for targeting
             if (typeof current_pipe_gap_start_y !== 'undefined' && !isNaN(current_pipe_gap_start_y) &&
                 typeof pipe_gap !== 'undefined' && !isNaN(pipe_gap)) {
                 
-                // Target Y for the bird's BOTTOM edge: top of the lower pipe.
-                const targetBirdBottomY = current_pipe_gap_start_y + pipe_gap;
+                const top_of_bottom_pipe = current_pipe_gap_start_y + pipe_gap;
                 
-                // Current bottom Y of the bird
-                const birdCurrentBottomY = bird_y + bird_radius;
+                // Safety offset: bird's bottom should be (bird_radius / 2 + 3) pixels ABOVE the top_of_bottom_pipe
+                const safety_offset = (bird_radius / 2) + 3; 
 
-                // Flap if the bird is falling and its bottom is at or has just passed the target level.
-                // The bird should flap to prevent its bottom from going *below* targetBirdBottomY.
-                const flapDecisionThreshold = targetBirdBottomY; 
-                // A small positive offset can be added to targetBirdBottomY if it tends to hit:
-                // const flapDecisionThreshold = targetBirdBottomY + 2; // flaps if birdBottom >= target + 2 (i.e. slightly lower)
+                // This is the Y-coordinate line that the bird's bottom edge should not go below.
+                // It's 'safety_offset' pixels *above* the actual top of the lower pipe.
+                const flap_decision_line_for_bird_bottom = top_of_bottom_pipe - safety_offset;
+                
+                const bird_current_bottom_y = bird_y + bird_radius;
 
-                // Uncomment for debugging:
-                // console.log(`Autobot: bird_y: ${bird_y.toFixed(1)}, birdBottom: ${birdCurrentBottomY.toFixed(1)}, targetBottomY: ${targetBirdBottomY.toFixed(1)}, v_y: ${bird_y_change.toFixed(1)}, pipe_y_start: ${current_pipe_gap_start_y}`);
+                // Uncomment for debugging autobot decisions:
+                // console.log(`Autobot: bird_bottom_Y: ${bird_current_bottom_y.toFixed(1)}, decision_line: ${flap_decision_line_for_bird_bottom.toFixed(1)}, v_y: ${bird_y_change.toFixed(1)}, pipe_top_actual: ${top_of_bottom_pipe.toFixed(1)}`);
 
-                if (bird_y_change >= 0 && // Bird is falling or at peak (velocity is non-negative)
-                    birdCurrentBottomY >= flapDecisionThreshold) { // Bird's bottom is at or below the target flap point
-                    // console.log("Autobot: Flap condition met. Flapping!");
+                if (bird_y_change >= 0 && // Bird is falling or at its peak (velocity is non-negative)
+                    bird_current_bottom_y >= flap_decision_line_for_bird_bottom) { 
+                    // Bird's bottom is at or has dipped below the safe flapping line.
+                    // console.log("Autobot: Flap condition met (target line reached). Flapping!");
                     performFlapAction();
                 }
             } else {
                 // Fallback: If pipe data isn't ready (e.g., very start before first reset, or an error),
                 // maintain a generic altitude to prevent immediate ground hit.
-                // Flap if falling and below, say, 60% of screen height.
-                // This fallback should ideally not be needed if resetGame initializes correctly.
-                if (bird_y_change > 0.2 && bird_y + bird_radius > SCREEN_HEIGHT * 0.65) { // Check if significantly falling & low
-                    // console.log("Autobot: Fallback flap due to undefined pipe data or being too low without pipe data.");
+                // This should ideally not be needed if resetGame initializes correctly.
+                if (bird_y_change > 0.2 && bird_y + bird_radius > SCREEN_HEIGHT * 0.70) { 
+                    // console.log("Autobot: Fallback flap (low altitude, no pipe data).");
                     performFlapAction();
                 }
             }
@@ -386,14 +385,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (event.key === 'b' || event.key === 'B') {
             autobotActive = !autobotActive;
             updateAutobotStatusDisplay();
-            if (autobotActive && (!gameRunning || gameOver) && !autobotRestartScheduled) { // If autobot turned on at start/gameover
+            if (autobotActive && (!gameRunning || gameOver) && !autobotRestartScheduled) {
                 autobotRestartScheduled = true;
-                setTimeout(() => { // Use a short delay to allow game state to settle if it was game over
+                setTimeout(() => { 
                     if (autobotActive && (!gameRunning || gameOver) ) { 
-                        performFlapAction(); // This will call resetGame
+                        performFlapAction(); 
                     }
                     if(autobotRestartScheduled) autobotRestartScheduled = false;
-                }, gameRunning ? 10 : 250); // No delay if already running, small if not
+                }, gameRunning ? 10 : 250); 
             }
         }
     });
@@ -456,8 +455,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         pipe_gap = BASE_PIPE_GAP; 
     }
-    // `current_pipe_gap_start_y` will be properly initialized by the first call to `resetGame()`
-    // when the game starts (via `performFlapAction`).
     
     updateDifficultyDisplay();
     updateAutobotStatusDisplay();
