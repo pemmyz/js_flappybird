@@ -21,6 +21,22 @@ This is a simple Flappy Bird-style game implemented using JavaScript/HTML5. The 
 - The score increases each time you pass a pipe.
 
 
+---
+
+## 🤖 Auto Modes
+
+The game includes two automated modes that can be toggled:
+
+| Mode           | Description |
+|----------------|-------------|
+| 🕹️ Demo Mode    | Automatically plays a sample round after inactivity. Useful as an idle screen or attract mode. |
+| 🤖 Bot Mode     | Activates an AI that attempts to play the game intelligently by flapping at optimal times. |
+
+- Press `D` to toggle **Demo Mode**
+- Press `A` to toggle **Bot Mode**
+- Both modes display a label on screen when active
+
+
 
 ## 🚦 Difficulty Modes
 
@@ -51,7 +67,8 @@ The game includes three selectable difficulty modes that affect the **pipe gap s
 - **Score Display** updates on both the canvas and DOM.
 - **Difficulty Label** shows current mode:  
   `"Difficulty: Normal (Press N to change)"`
-
+- On-screen indicators show when **Demo Mode** or **Bot Mode** is active.
+  
 ## 📱 Mobile Support
 
 - Tap/click anywhere on the canvas to flap.
@@ -66,7 +83,9 @@ The game includes three selectable difficulty modes that affect the **pipe gap s
 - Gravity and flap mechanics  
 - Collision detection with pipes and screen bounds  
 - Randomized pipe gap positions for variety  
-- **Selectable difficulty levels**  
+- **Selectable difficulty levels**
+- **Automatic demo mode**  
+- **Automatic bot mode (AI player)**  
 - Mobile-friendly: Tap to flap  
 
 ## ✅ To Do
@@ -75,4 +94,4 @@ The game includes three selectable difficulty modes that affect the **pipe gap s
 - Add a start menu and game over screen  
 - Improve graphics with images or sprites  
 - High score saving
-- Add autobot AI
+
